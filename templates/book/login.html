@@ -3,6 +3,7 @@
 {% block title %} Login {% endblock %}
 
 {% block content %}
+
     <h3>Login Page</h3>
     <form action="{% url 'book:login' %}" method="post">
         {% csrf_token %}

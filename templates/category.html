@@ -1,0 +1,7 @@
+{% if request.user.is_authenticated %}
+    <a href="{% url 'book:my-book' %}">My Books</a>
+    <a href="{% url 'book:new-bookshelf' %}">New Bookshelf</a>
+{% else %}
+    <a href="{% url 'book:register' %}">Register</a>
+    <a href="{% url 'book:login' %}">Login</a>
+{% endif %}

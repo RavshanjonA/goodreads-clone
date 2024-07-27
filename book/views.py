@@ -1,10 +1,13 @@
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
+from django.urls import reverse, reverse_lazy
 from django.views import View
+from django.views.generic import CreateView, UpdateView, DetailView, DeleteView
 
-from book.forms import RegisterForm, LoginForm
-from book.models import Users
+from book.forms import RegisterForm, LoginForm, BookshelfForm
+from book.models import Users, Book, Bookshelf
 
 
 class RegisterView(View):
@@ -18,7 +21,10 @@ class RegisterView(View):
     def post(self, request):
         form = RegisterForm(data=request.POST, files=request.FILES)
         if form.is_valid():
-            form.save()
+            user = form.save()
+            Bookshelf.objects.create(owner=user, name="Read")
+            Bookshelf.objects.create(owner=user, name="Currently Reading")
+            Bookshelf.objects.create(owner=user, name="Want To Read")
             return redirect("book:login")
         else:
             context = {
@@ -46,3 +52,19 @@ class LoginView(View):
             else:
                 messages.warning(request, "With given data user not found")
                 return redirect("home")
+
+
+class MyBookView(View, LoginRequiredMixin):
+    def get(self, request):
+        shelves = Bookshelf.objects.filter(owner=request.user)
+        context = {
+            "shelves": shelves
+        }
+        return render(request, "book/my_book.html", context=context)
+
+
+class BookshelfCreateView(CreateView, LoginRequiredMixin):
+    queryset = Bookshelf.objects.all()
+    template_name = "book/new-bookshelf.html"
+    form_class = BookshelfForm
+    success_url = reverse_lazy("book:my-book")

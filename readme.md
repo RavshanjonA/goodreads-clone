@@ -1,4 +1,3 @@
-## admin class orqali hamma modellarni register qilish va parametrlarni qollashh
-## book create uchun form yozish
-## register formda  emailni unique bolishi uchun validation yozish, bitta email bn bitta user register qila olsin
-## login formda username ni bazada borlikka tekshiradigan validation yozing,
+## 4ta generic view orqali book crud va review crud
+## user modeliga login_try_count qoshish va login_try_countni tekshirish uchun middeware yaratish.
+## query.txt ga m2m relation uchun 6ta query yozish.

@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block title %} Home {% endblock %}
+
 {% block content %}
-    <a href="{% url 'book:register' %}">Register</a>
-    <a href="{% url 'book:login' %}">Login</a>
+    {% include 'category.html' %}
 {% endblock %}
