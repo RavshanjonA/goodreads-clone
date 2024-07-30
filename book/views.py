@@ -1,12 +1,12 @@
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views import View
 from django.views.generic import CreateView, UpdateView, DetailView, DeleteView
 
-from book.forms import RegisterForm, LoginForm, BookshelfForm
+from book.forms import RegisterForm, LoginForm, BookshelfForm, UserUpdateForm
 from book.models import Users, Book, Bookshelf
 
 
@@ -52,6 +52,42 @@ class LoginView(View):
             else:
                 messages.warning(request, "With given data user not found")
                 return redirect("home")
+
+
+class LogoutView(LoginRequiredMixin, View):
+    def get(self, request):
+        logout(request)
+        return redirect("home")
+
+
+class UserProfileView(LoginRequiredMixin, View):
+    def get(self, request):
+        context = {
+            "user": request.user
+        }
+        return render(request, "book/profile.html", context=context)
+
+
+class UserUpdateProfileView(LoginRequiredMixin, View):
+    def get(self, request):
+        user = get_object_or_404(Users, username=request.user.username)
+        form = UserUpdateForm(instance=user)
+        context = {
+            "form": form
+        }
+        return render(request, "book/user-profile-update.html", context=context)
+
+    def post(self, request):
+        form = UserUpdateForm(data=request.POST, files=request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "User profile successfuly updated")
+            return redirect("book:profile")
+        else:
+            context = {
+                "form": form
+            }
+            return render(request, "book/user-profile-update.html", context=context)
 
 
 class MyBookView(View, LoginRequiredMixin):
