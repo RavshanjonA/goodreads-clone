@@ -1,0 +1,3 @@
+django debuug toolbar
+select_related prefetch_related
+pagination

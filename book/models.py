@@ -4,6 +4,8 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 password_validation
+
+
 class Users(AbstractUser):
     middle_name = models.CharField(max_length=56, null=True, blank=True)
     avatar = models.ImageField(upload_to="avatar/", null=True, blank=True)
@@ -11,7 +13,7 @@ class Users(AbstractUser):
 
 class Book(models.Model):
     title = models.CharField(max_length=128)
-    description = models.TextField(max_length=128)
+    description = models.TextField()
     published = models.DateField()
     isbn = models.CharField(max_length=128, unique=True)
     language = models.CharField(max_length=12, blank=True, null=True)
@@ -22,6 +24,9 @@ class Book(models.Model):
 
     def __str__(self):
         return self.title
+
+    class Meta:
+        index_together = ("title", "isbn")
 
 
 class Bookshelf(models.Model):

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %} Book {% endblock %}
+
+{% block content %}
+    {% include 'category.html' %}
+    <div class="row">
+        <div class="col-3">
+            <img class="img-fluid" src="{{ book.cover.url }}" alt="No Cover">
+        </div>
+        <div class="col-5">
+            <p><b>{{ book.title }}</b></p>
+            <p>{{ book.description}}</p>
+                <p>
+                Authors:
+                    {% for author in book.authors.all  %}
+                    {{ author.first_name }} {{ author.last_name }} ;
+                    {% endfor %}
+                </p>
+                <p>
+                Genres:
+                    {% for genre  in book.genres.all %}
+                        {{ genre.name   }},
+
+                    {% endfor %}
+                </p>
+                Rating: {{ book.book_rating|default:"No rating"   }}
+        </div>
+    </div>
+
+
+{% endblock %}

@@ -1,13 +1,31 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Avg
+from django.db.models.functions import Round
 from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import CreateView, UpdateView, DetailView, DeleteView
+from django.views.generic import CreateView, DetailView, ListView
 
 from book.forms import RegisterForm, LoginForm, BookshelfForm, UserUpdateForm
 from book.models import Users, Book, Bookshelf
+
+
+class BookListView(ListView):
+    queryset = Book.objects.prefetch_related("authors", "genres").all()
+    template_name = "book/book-list.html"
+    context_object_name = "books"
+    paginate_by = 2
+
+
+
+class BookDetailView(DetailView):
+    queryset = Book.objects.annotate(book_rating=Round(Avg("reviws__rating"), precision=1)).all()
+    template_name = "book/book-detial.html"
+    context_object_name = "book"
+    pk_url_kwarg = "id"
+    # slug_url_kwarg = "slugy"
 
 
 class RegisterView(View):
